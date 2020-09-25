@@ -28,8 +28,18 @@ const MIN_LOCATION_Y = 130;
 const MAX_LOCATION_Y = 630;
 const IMAGE_NUM_RANGES = [1, 2, 3, 4, 5, 6, 7, 8];
 
+
 const map = document.querySelector(`.map`);
 map.classList.remove(`map--faded`);
+
+const mapPinList = document.querySelector(`.map__pins`);
+const pinTemplate = document.querySelector(`#pin`)
+  .content
+  .querySelector(`.map__pin`);
+const mapCard = document.querySelector(`.map`);
+const cardTemplate = document.querySelector(`#card`)
+  .content
+  .querySelector(`.map__card`);
 
 const getUnique = function (titles) {
   let uniqueEl = titles[getRandom(0, titles.length)];
@@ -57,7 +67,7 @@ const createObject = function () {
   let locationY = getRandom(MIN_LOCATION_Y, MAX_LOCATION_Y);
   return {
     author: {
-      avatar: `img/avatars/user0` + getUnique(IMAGE_NUM_RANGES) + `.png`
+      avatar: `img/avatars/user0${getUnique(IMAGE_NUM_RANGES)}.png`
     },
 
     offer: {
@@ -88,6 +98,72 @@ const createData = function () {
   return objects;
 };
 
-createData();
+const createFragmentFeatures = function (facilities) {
+  let fragmentFeatures = document.createDocumentFragment();
+  for (let i = 0; i < facilities.length; i++) {
+    let li = document.createElement(`li`);
+    li.classList.add(`popup__feature`);
+    let classAdded = `popup__feature--` + facilities[i];
+    li.classList.add(classAdded);
+    fragmentFeatures.appendChild(li);
+  }
+  return fragmentFeatures;
+};
+
+const createFragmentPhotos = function (pins) {
+  let fragmentPhotos = document.createDocumentFragment();
+  for (let i = 0; i < pins.length; i++) {
+    let img = document.createElement(`img`);
+    img.src = pins[i];
+    img.width = 45;
+    img.height = 40;
+    img.classList.add(`popup__photo`);
+    fragmentPhotos.appendChild(img);
+  }
+  return fragmentPhotos;
+};
+
+const createPins = function (icons) {
+  for (let i = 0; i < icons.length; i++) {
+    let fragmentPins = document.createDocumentFragment();
+    let pinElem = pinTemplate.cloneNode(true);
+    pinElem.children[0].src = icons[i].author.avatar;
+    pinElem.style.left = icons[i].location.x + `px`;
+    pinElem.style.top = icons[i].location.y + `px`;
+    pinElem.children[0].alt = icons[i].offer.title;
+    fragmentPins.appendChild(pinElem);
+    mapPinList.appendChild(fragmentPins);
+  }
+};
+
+const createCard = function (item) {
+  let cardItem = cardTemplate.cloneNode(true);
+
+  mapCard.insertBefore(cardItem, mapPinList);
+  let fragmentCard = document.createDocumentFragment();
+  let cardFeatures = cardItem.querySelector(`.popup__features`);
+  cardFeatures.innerHTML = ``;
+  cardFeatures.appendChild(createFragmentFeatures(item.offer.features));
+  let cardPhotos = cardItem.querySelector(`.popup__photos`);
+  cardPhotos.innerHTML = ``;
+  cardPhotos.appendChild(createFragmentPhotos(item.offer.photos));
 
 
+  fragmentCard.appendChild(cardItem);
+  mapCard.appendChild(fragmentCard);
+  return cardItem;
+};
+
+const createItems = function (card) {
+  let items = [];
+  for (let i = 0; i < CARDS_AMOUNTS; i++) {
+    items.push(card);
+  }
+  return items;
+};
+
+const cardsArray = createData();
+
+createPins(cardsArray);
+const oneCard = createCard(cardsArray[0]);
+createItems(oneCard);
