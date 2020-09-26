@@ -30,6 +30,13 @@ const IMAGE_NUM_RANGES = [1, 2, 3, 4, 5, 6, 7, 8];
 const IMG_WIDTH = 45;
 const IMG_HEIGHT = 40;
 
+const TypeOfHouses = {
+  'flat': `Квартира`,
+  'bungalow': `Бунгало`,
+  'house': `Дом`,
+  'palace': `Дворец`
+};
+
 
 const map = document.querySelector(`.map`);
 map.classList.remove(`map--faded`);
@@ -140,16 +147,29 @@ const createPins = function (icons) {
 
 const createCard = function (item) {
   const cardItem = cardTemplate.cloneNode(true);
+  const roomNum = item.offer.rooms;
+  const guestNum = item.offer.guests;
+
+  const guestPhrase = guestNum === 1 ? ` гостя` : ` гостей`;
+  const roomPhrase = roomNum === 1 ? ` комната для ` : `комнаты для`;
+
 
   mapCard.insertBefore(cardItem, mapPinList);
+  cardItem.querySelector(`.popup__title`).textContent = item.offer.title;
+  cardItem.querySelector(`.popup__text--address`).textContent = item.offer.address;
+  cardItem.querySelector(`.popup__text--price`).innerHTML = `${item.offer.price} &#x20bd/ночь`;
+  cardItem.querySelector(`.popup__type`).textContent = TypeOfHouses[item.offer.type];
+  cardItem.querySelector(`.popup__text--capacity`).textContent = `${roomNum}${roomPhrase} для ${guestNum}${guestPhrase}`;
+  cardItem.querySelector(`.popup__text--time`).textContent = `Заезд после ${item.offer.checkin} выезд после ${item.offer.checkout}`;
   const fragmentCard = document.createDocumentFragment();
   const cardFeatures = cardItem.querySelector(`.popup__features`);
   cardFeatures.innerHTML = ``;
   cardFeatures.appendChild(createFragmentFeatures(item.offer.features));
+  cardItem.querySelector(`.popup__description`).textContent = item.offer.description;
   const cardPhotos = cardItem.querySelector(`.popup__photos`);
   cardPhotos.innerHTML = ``;
   cardPhotos.appendChild(createFragmentPhotos(item.offer.photos));
-
+  cardItem.querySelector(`.popup__avatar`).src = item.author.avatar;
 
   fragmentCard.appendChild(cardItem);
   mapCard.appendChild(fragmentCard);
