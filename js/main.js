@@ -44,7 +44,7 @@ const cardTemplate = document.querySelector(`#card`)
   .querySelector(`.map__card`);
 
 const getUnique = function (titles) {
-  let uniqueEl = titles[getRandom(0, titles.length)];
+  const uniqueEl = titles[getRandom(0, titles.length)];
   titles.splice(titles.indexOf(uniqueEl), 1);
   return uniqueEl;
 };
@@ -65,8 +65,8 @@ const getRandomFeatures = function (array) {
 const customFeatures = getRandomFeatures(FEATURES);
 const createObject = function () {
 
-  let locationX = getRandom(MIN_LOCATION_X, MAX_LOCATION_X);
-  let locationY = getRandom(MIN_LOCATION_Y, MAX_LOCATION_Y);
+  const locationX = getRandom(MIN_LOCATION_X, MAX_LOCATION_X);
+  const locationY = getRandom(MIN_LOCATION_Y, MAX_LOCATION_Y);
   return {
     author: {
       avatar: `img/avatars/user0${getUnique(IMAGE_NUM_RANGES)}.png`
@@ -93,7 +93,7 @@ const createObject = function () {
 };
 
 const createData = function () {
-  let objects = [];
+  const objects = [];
   for (let i = 0; i < CARDS_AMOUNTS; i++) {
     objects.push(createObject());
   }
@@ -103,9 +103,9 @@ const createData = function () {
 const createFragmentFeatures = function (facilities) {
   const fragmentFeatures = document.createDocumentFragment();
   for (let i = 0; i < facilities.length; i++) {
-    let li = document.createElement(`li`);
+    const li = document.createElement(`li`);
     li.classList.add(`popup__feature`);
-    let classAdded = `popup__feature--` + facilities[i];
+    const classAdded = `popup__feature--${facilities[i]}`;
     li.classList.add(classAdded);
     fragmentFeatures.appendChild(li);
   }
@@ -115,7 +115,7 @@ const createFragmentFeatures = function (facilities) {
 const createFragmentPhotos = function (pins) {
   const fragmentPhotos = document.createDocumentFragment();
   for (let i = 0; i < pins.length; i++) {
-    let img = document.createElement(`img`);
+    const img = document.createElement(`img`);
     img.src = pins[i];
     img.width = IMG_WIDTH;
     img.height = IMG_HEIGHT;
@@ -130,8 +130,8 @@ const createPins = function (icons) {
     const fragmentPins = document.createDocumentFragment();
     const pinElem = pinTemplate.cloneNode(true);
     pinElem.children[0].src = icons[i].author.avatar;
-    pinElem.style.left = icons[i].location.x + `px`;
-    pinElem.style.top = icons[i].location.y + `px`;
+    pinElem.style.left = `${icons[i].location.x}px`;
+    pinElem.style.top = `${icons[i].location.y}px`;
     pinElem.children[0].alt = icons[i].offer.title;
     fragmentPins.appendChild(pinElem);
     mapPinList.appendChild(fragmentPins);
@@ -153,7 +153,6 @@ const createCard = function (item) {
 
   fragmentCard.appendChild(cardItem);
   mapCard.appendChild(fragmentCard);
-  return cardItem;
 };
 
 const cards = createData();
