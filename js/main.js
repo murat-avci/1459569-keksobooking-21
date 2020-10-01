@@ -61,8 +61,9 @@ const cardTemplate = document.querySelector(`#card`)
 const mainPin = document.querySelector(`.map__pin--main`);
 const advertForm = document.querySelector(`.ad-form`);
 const inputAddress = document.querySelector(`#address`);
-const inputAddressLoad = `${Math.floor(PIN_OFFSET_X + (PIN_WIDTH / 2))} , ${Math.floor(PIN_OFFSET_Y + (PIN_HEIGHT / 2))}`;
-const inputAddressActive = `${Math.floor(PIN_OFFSET_X + (PIN_WIDTH / 2))} , ${Math.floor((PIN_OFFSET_Y + PIN_HEIGHT + POINTER_HEIGHT))}`;
+const inputAddressX = Math.floor(PIN_OFFSET_X + (PIN_WIDTH / 2));
+const inputAddressLoad = `${inputAddressX} , ${Math.floor(PIN_OFFSET_Y + (PIN_HEIGHT / 2))}`;
+const inputAddressActive = `${inputAddressX} , ${Math.floor((PIN_OFFSET_Y + PIN_HEIGHT + POINTER_HEIGHT))}`;
 
 let activeCardId;
 let currentPin = null;
@@ -278,3 +279,26 @@ const removeOnButtonMouseDown = function () {
 };
 
 mainPin.addEventListener(`mousedown`, onButtonMouseDown);
+
+const formElementRoomNumber = document.querySelector(`#room_number`);
+const formElementCapacity = document.querySelector(`#capacity`);
+
+let roomNumberValue = formElementRoomNumber.value;
+let capacityValue = formElementCapacity.value;
+
+const setRoomNumberCapacityValidity = function (evt) {
+  const target = evt.target;
+  roomNumberValue = formElementRoomNumber.value;
+  capacityValue = formElementCapacity.value;
+  if ((+roomNumberValue === 100 && +capacityValue !== 0) || (+capacityValue === 0 && +roomNumberValue !== 100)) {
+    target.setCustomValidity(`Недопустимое значение`);
+  } else if (+roomNumberValue < +capacityValue) {
+    target.setCustomValidity(`Количество гостей не должно быть больше количества комнат`);
+  } else {
+    formElementCapacity.setCustomValidity(``);
+    formElementRoomNumber.setCustomValidity(``);
+  }
+};
+
+formElementCapacity.addEventListener(`input`, setRoomNumberCapacityValidity);
+formElementRoomNumber.addEventListener(`input`, setRoomNumberCapacityValidity);
