@@ -18,6 +18,24 @@ const PHOTOS = [`http://o0.github.io/assets/images/tokyo/hotel1.jpg`, `http://o0
 const OFFER_TYPES = [`palace`, `flat`, `house`, `bungalow`];
 const FEATURES = [`wifi`, `dishwasher`, `parking`, `washer`, `elevator`, `conditioner`];
 const CHECK_TIMES = [`12:00`, `13:00`, `14:00`];
+const rooms = {
+  1: {
+    enabled: [`1`],
+    textError: `не более одного гостя`
+  },
+  2: {
+    enabled: [`1`, `2`],
+    textError: `не более одного или двух гостей`
+  },
+  3: {
+    enabled: [`1`, `2`, `3`],
+    textError: `не более одного, двух или трёх гостей`
+  },
+  100: {
+    enabled: [`0`],
+    textError: `не для гостей`
+  }
+};
 const MIN_PRICE = 1000;
 const MAX_PRICE = 1000000;
 const MIN_ROOM = 1;
@@ -68,6 +86,11 @@ const inputAddressActive = `${inputAddressX} , ${Math.floor((PIN_OFFSET_Y + PIN_
 let activeCardId;
 let currentPin = null;
 let currentCard = null;
+
+const mapForm = document.querySelector(`.ad-form `);
+const roomNumber = mapForm.querySelector(`#room_number`);
+const capacity = mapForm.querySelector(`#capacity`);
+const options = capacity.querySelectorAll(`option`);
 
 const getUnique = function (titles) {
   const uniqueEl = titles[getRandom(0, titles.length)];
@@ -280,25 +303,30 @@ const removeOnButtonMouseDown = function () {
 
 mainPin.addEventListener(`mousedown`, onButtonMouseDown);
 
-const formElementRoomNumber = document.querySelector(`#room_number`);
-const formElementCapacity = document.querySelector(`#capacity`);
+roomNumber.addEventListener(`change`, function () {
+  const selectType = rooms[roomNumber.value];
+  setOptions(selectType);
+  setValidity(selectType);
 
-let roomNumberValue = formElementRoomNumber.value;
-let capacityValue = formElementCapacity.value;
+});
 
-const setRoomNumberCapacityValidity = function (evt) {
-  const target = evt.target;
-  roomNumberValue = formElementRoomNumber.value;
-  capacityValue = formElementCapacity.value;
-  if ((+roomNumberValue === 100 && +capacityValue !== 0) || (+capacityValue === 0 && +roomNumberValue !== 100)) {
-    target.setCustomValidity(`Недопустимое значение`);
-  } else if (+roomNumberValue < +capacityValue) {
-    target.setCustomValidity(`Количество гостей не должно быть больше количества комнат`);
-  } else {
-    formElementCapacity.setCustomValidity(``);
-    formElementRoomNumber.setCustomValidity(``);
-  }
+const setOptions = function (selectValue) {
+
+  const checkValidity = function (value) {
+    return selectValue.enabled.indexOf(value) === -1;
+  };
+
+  options.forEach(function (option) {
+    option.disabled = checkValidity(option.value);
+  });
 };
 
-formElementCapacity.addEventListener(`input`, setRoomNumberCapacityValidity);
-formElementRoomNumber.addEventListener(`input`, setRoomNumberCapacityValidity);
+const setValidity = function (selectValue) {
+  const isValid = selectValue.enabled.indexOf(capacity.value) !== -1;
+  const customValidity = isValid ? `` : selectValue.textError;
+  capacity.setCustomValidity(customValidity);
+};
+
+capacity.addEventListener(`change`, function () {
+  capacity.setCustomValidity(``);
+});
