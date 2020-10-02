@@ -61,7 +61,7 @@ const TYPES_OF_HOUSES = {
   }
 };
 
-const rooms = {
+const ROOMS = {
   1: {
     enabled: [`1`],
     textError: `не более одного гостя`
@@ -148,7 +148,7 @@ const createObject = function () {
       address: `${locationX}, ${locationY}`,
       price: getRandom(MIN_PRICE, MAX_PRICE),
       type: OFFER_TYPES[getRandom(0, OFFER_TYPES.length + 1)],
-      rooms: getRandom(MIN_ROOM, MAX_ROOM + MIN_ROOM),
+      ROOMS: getRandom(MIN_ROOM, MAX_ROOM + MIN_ROOM),
       guests: getRandom(MIN_GUESTS, MAX_GUESTS + 1),
       checkin: CHECK_TIMES[getRandom(0, CHECK_TIMES.length)],
       checkout: CHECK_TIMES[getRandom(0, CHECK_TIMES.length)],
@@ -212,7 +212,7 @@ const createPins = function (icons) {
 
 const getCardData = function (item) {
   const cardItem = cardTemplate.cloneNode(true);
-  const roomNum = item.offer.rooms;
+  const roomNum = item.offer.ROOMS;
   const guestNum = item.offer.guests;
 
   const guestPhrase = guestNum === 1 ? ` гостя` : ` гостей`;
@@ -234,6 +234,8 @@ const getCardData = function (item) {
   cardPhotos.appendChild(createFragmentPhotos(item.offer.photos));
   cardItem.querySelector(`.popup__avatar`).src = item.author.avatar;
   mapSection.appendChild(cardItem);
+
+  return cardItem;
 };
 
 const cards = createData();
@@ -360,7 +362,7 @@ houseType.addEventListener(`change`, function () {
 const options = capacity.querySelectorAll(`option`);
 
 roomNumber.addEventListener(`change`, function () {
-  const selectType = rooms[roomNumber.value];
+  const selectType = ROOMS[roomNumber.value];
   setOptions(selectType);
   setValidity(selectType);
 
@@ -403,11 +405,12 @@ title.addEventListener(`input`, function (evt) {
   checkTitleLength(evt);
 });
 
+const allInputsElements = mapForm.querySelectorAll(`input`);
+
 const onSubmitClick = function () {
   checkBeforeSend(allInputsElements);
 };
 
-const allInputsElements = mapForm.querySelectorAll(`input`);
 
 formSubmitElement.addEventListener(`click`, onSubmitClick);
 
