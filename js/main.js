@@ -18,10 +18,30 @@ const PHOTOS = [`http://o0.github.io/assets/images/tokyo/hotel1.jpg`, `http://o0
 const OFFER_TYPES = [`palace`, `flat`, `house`, `bungalow`];
 const FEATURES = [`wifi`, `dishwasher`, `parking`, `washer`, `elevator`, `conditioner`];
 const CHECK_TIMES = [`12:00`, `13:00`, `14:00`];
+const rooms = {
+  1: {
+    enabled: [`1`],
+    textError: `не более одного гостя`
+  },
+  2: {
+    enabled: [`1`, `2`],
+    textError: `не более одного или двух гостей`
+  },
+  3: {
+    enabled: [`1`, `2`, `3`],
+    textError: `не более одного, двух или трёх гостей`
+  },
+  100: {
+    enabled: [`0`],
+    textError: `не для гостей`
+  }
+};
 const MIN_PRICE = 1000;
 const MAX_PRICE = 1000000;
 const MIN_ROOM = 1;
 const MAX_ROOM = 5;
+const MIN_GUESTS = 1;
+const MAX_GUESTS = 5;
 const MIN_LOCATION_X = 100;
 const MAX_LOCATION_X = 900;
 const MIN_LOCATION_Y = 130;
@@ -29,6 +49,13 @@ const MAX_LOCATION_Y = 630;
 const IMAGE_NUM_RANGES = [1, 2, 3, 4, 5, 6, 7, 8];
 const IMG_WIDTH = 45;
 const IMG_HEIGHT = 40;
+const PIN_WIDTH = 65;
+const PIN_HEIGHT = 65;
+const PIN_OFFSET_X = 570;
+const PIN_OFFSET_Y = 375;
+const POINTER_HEIGHT = 22;
+
+const ESC_KEYCODE = 27;
 
 const TypeOfHouses = {
   'flat': `Квартира`,
@@ -38,17 +65,32 @@ const TypeOfHouses = {
 };
 
 
-const map = document.querySelector(`.map`);
-map.classList.remove(`map--faded`);
-
+const mapSection = document.querySelector(`.map`);
+const fieldsets = document.querySelectorAll(`fieldset`);
+const selects = document.querySelectorAll(`select[name^=housing]`);
 const mapPinList = document.querySelector(`.map__pins`);
 const pinTemplate = document.querySelector(`#pin`)
   .content
   .querySelector(`.map__pin`);
-const mapCard = document.querySelector(`.map`);
 const cardTemplate = document.querySelector(`#card`)
   .content
   .querySelector(`.map__card`);
+
+const mainPin = document.querySelector(`.map__pin--main`);
+const advertForm = document.querySelector(`.ad-form`);
+const inputAddress = document.querySelector(`#address`);
+const inputAddressX = Math.floor(PIN_OFFSET_X + (PIN_WIDTH / 2));
+const inputAddressLoad = `${inputAddressX} , ${Math.floor(PIN_OFFSET_Y + (PIN_HEIGHT / 2))}`;
+const inputAddressActive = `${inputAddressX} , ${Math.floor((PIN_OFFSET_Y + PIN_HEIGHT + POINTER_HEIGHT))}`;
+
+let activeCardId;
+let currentPin = null;
+let currentCard = null;
+
+const mapForm = document.querySelector(`.ad-form `);
+const roomNumber = mapForm.querySelector(`#room_number`);
+const capacity = mapForm.querySelector(`#capacity`);
+const options = capacity.querySelectorAll(`option`);
 
 const getUnique = function (titles) {
   const uniqueEl = titles[getRandom(0, titles.length)];
@@ -60,16 +102,17 @@ const getRandom = function (min, max) {
   return Math.floor(Math.random() * max + min);
 };
 
-const compareRandom = function () {
-  return Math.random() - 0.5;
+const shuffleArray = function (array) {
+  const finalArr = array.slice();
+  for (let i = 0; i < finalArr.length; i++) {
+    let j = Math.floor(Math.random() * (i + 1));
+    let tmp = finalArr[i];
+    finalArr[i] = finalArr[j];
+    finalArr[j] = tmp;
+  }
+  return finalArr;
 };
 
-const getRandomFeatures = function (array) {
-  array.length = getRandom(1, array.length);
-  return array;
-};
-
-const customFeatures = getRandomFeatures(FEATURES);
 const createObject = function () {
 
   const locationX = getRandom(MIN_LOCATION_X, MAX_LOCATION_X);
@@ -83,14 +126,14 @@ const createObject = function () {
       title: getUnique(TITLES),
       address: `${locationX}, ${locationY}`,
       price: getRandom(MIN_PRICE, MAX_PRICE),
-      type: OFFER_TYPES[getRandom(0, OFFER_TYPES.length)],
-      rooms: getRandom(MIN_ROOM, MAX_ROOM),
-      guests: getRandom(1, 5),
+      type: OFFER_TYPES[getRandom(0, OFFER_TYPES.length + 1)],
+      rooms: getRandom(MIN_ROOM, MAX_ROOM + MIN_ROOM),
+      guests: getRandom(MIN_GUESTS, MAX_GUESTS + 1),
       checkin: CHECK_TIMES[getRandom(0, CHECK_TIMES.length)],
       checkout: CHECK_TIMES[getRandom(0, CHECK_TIMES.length)],
-      features: customFeatures,
+      features: shuffleArray(FEATURES.slice(0, getRandom(0, FEATURES.length + 1))),
       description: DESCRIPTIONS,
-      photos: PHOTOS.sort(compareRandom),
+      photos: shuffleArray(PHOTOS),
     },
     location: {
       x: locationX,
@@ -145,7 +188,7 @@ const createPins = function (icons) {
   }
 };
 
-const createCard = function (item) {
+const getCardData = function (item) {
   const cardItem = cardTemplate.cloneNode(true);
   const roomNum = item.offer.rooms;
   const guestNum = item.offer.guests;
@@ -154,14 +197,13 @@ const createCard = function (item) {
   const roomPhrase = roomNum === 1 ? ` комната для ` : `комнаты для`;
 
 
-  mapCard.insertBefore(cardItem, mapPinList);
+  mapSection.insertBefore(cardItem, mapPinList);
   cardItem.querySelector(`.popup__title`).textContent = item.offer.title;
   cardItem.querySelector(`.popup__text--address`).textContent = item.offer.address;
   cardItem.querySelector(`.popup__text--price`).innerHTML = `${item.offer.price} &#x20bd/ночь`;
   cardItem.querySelector(`.popup__type`).textContent = TypeOfHouses[item.offer.type];
   cardItem.querySelector(`.popup__text--capacity`).textContent = `${roomNum}${roomPhrase} для ${guestNum}${guestPhrase}`;
   cardItem.querySelector(`.popup__text--time`).textContent = `Заезд после ${item.offer.checkin} выезд после ${item.offer.checkout}`;
-  const fragmentCard = document.createDocumentFragment();
   const cardFeatures = cardItem.querySelector(`.popup__features`);
   cardFeatures.innerHTML = ``;
   cardFeatures.appendChild(createFragmentFeatures(item.offer.features));
@@ -170,13 +212,121 @@ const createCard = function (item) {
   cardPhotos.innerHTML = ``;
   cardPhotos.appendChild(createFragmentPhotos(item.offer.photos));
   cardItem.querySelector(`.popup__avatar`).src = item.author.avatar;
-
-  fragmentCard.appendChild(cardItem);
-  mapCard.appendChild(fragmentCard);
+  mapSection.appendChild(cardItem);
 };
 
 const cards = createData();
 
-createPins(cards);
-createCard(cards[0]);
+const toggleDisabled = function (isDisabled, nodes) {
+  for (let i = 0; i < nodes.length; i++) {
+    nodes[i].disabled = isDisabled;
+  }
+};
 
+window.addEventListener(`load`, function () {
+  toggleDisabled(true, fieldsets);
+  toggleDisabled(true, selects);
+  inputAddress.value = inputAddressLoad;
+});
+
+const onButtonMouseDown = function () {
+  inputAddress.disabled = true;
+  inputAddress.value = inputAddressActive;
+  mapSection.classList.remove(`map--faded`);
+  advertForm.classList.remove(`ad-form--disabled`);
+  createPins(cards);
+  toggleDisabled(false, fieldsets);
+  toggleDisabled(false, selects);
+  mainPin.addEventListener(`mousedown`, removeOnButtonMouseDown);
+};
+
+const createCard = function (id) {
+  activeCardId = id;
+  currentCard = mapSection.appendChild(getCardData(cards[id]));
+  document.addEventListener(`keydown`, onPopupEscPress);
+};
+
+const removeCard = function () {
+  if (currentCard) {
+    mapSection.removeChild(currentCard);
+    currentCard = null;
+  }
+};
+
+const onPopupEscPress = function (evt) {
+  if (evt.keyCode === ESC_KEYCODE) {
+    removeCard();
+    document.removeEventListener(`keydown`, onPopupEscPress);
+    currentPin.classList.remove(`map__pin--active`);
+    activeCardId = null;
+    currentPin.blur();
+  }
+};
+
+const checkActive = function () {
+  removeCard();
+  if (currentPin) {
+    currentPin.classList.remove(`map__pin--active`);
+    activeCardId = null;
+  }
+};
+
+const showCard = function (evt) {
+  const target = evt.target;
+  const pinButton = target.closest(`.map__pin:not(.map__pin--main)`);
+  const buttonClose = target.className === `popup__close`;
+
+  if (buttonClose) {
+    checkActive();
+  }
+
+  if (!pinButton || (pinButton && activeCardId === pinButton.dataset.id)) {
+    return;
+  }
+
+  checkActive();
+
+  currentPin = pinButton;
+
+  createCard(pinButton.dataset.id);
+
+  pinButton.classList.add(`map__pin--active`);
+};
+
+mapSection.addEventListener(`click`, function (evt) {
+  showCard(evt);
+});
+
+const removeOnButtonMouseDown = function () {
+  mainPin.removeEventListener(`mousedown`, onButtonMouseDown);
+};
+
+mainPin.addEventListener(`mousedown`, onButtonMouseDown);
+
+roomNumber.addEventListener(`change`, function () {
+  const selectType = rooms[roomNumber.value];
+  setOptions(selectType);
+  setValidity(selectType);
+
+});
+
+const setOptions = function (selectValue) {
+
+  const checkValidity = function (value) {
+    return selectValue.enabled.indexOf(value) === -1;
+  };
+
+  options.forEach(function (option) {
+    option.disabled = checkValidity(option.value);
+  });
+};
+
+const setValidity = function (selectValue) {
+  const isValid = selectValue.enabled.indexOf(capacity.value) !== -1;
+  const customValidity = isValid ? `` : selectValue.textError;
+  capacity.setCustomValidity(customValidity);
+};
+
+capacity.addEventListener(`change`, function () {
+  capacity.setCustomValidity(``);
+});
