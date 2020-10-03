@@ -148,7 +148,7 @@ const createObject = function () {
       address: `${locationX}, ${locationY}`,
       price: getRandom(MIN_PRICE, MAX_PRICE),
       type: OFFER_TYPES[getRandom(0, OFFER_TYPES.length + 1)],
-      ROOMS: getRandom(MIN_ROOM, MAX_ROOM + MIN_ROOM),
+      rooms: getRandom(MIN_ROOM, MAX_ROOM + MIN_ROOM),
       guests: getRandom(MIN_GUESTS, MAX_GUESTS + 1),
       checkin: CHECK_TIMES[getRandom(0, CHECK_TIMES.length)],
       checkout: CHECK_TIMES[getRandom(0, CHECK_TIMES.length)],
@@ -212,7 +212,7 @@ const createPins = function (icons) {
 
 const getCardData = function (item) {
   const cardItem = cardTemplate.cloneNode(true);
-  const roomNum = item.offer.ROOMS;
+  const roomNum = item.offer.rooms;
   const guestNum = item.offer.guests;
 
   const guestPhrase = guestNum === 1 ? ` гостя` : ` гостей`;
