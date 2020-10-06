@@ -24,7 +24,7 @@
     MAX_ROOM: 5,
     MIN_GUESTS: 1,
     MAX_GUESTS: 5,
-    MIN_LOCATION_Y: 100,
+    MIN_LOCATION_Y: 130,
     MAX_LOCATION_Y: 630,
     IMAGE_NUM_RANGES: [1, 2, 3, 4, 5, 6, 7, 8],
     PIN_HEIGHT: 65,
