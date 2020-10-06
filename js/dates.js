@@ -15,7 +15,7 @@
         title: window.util.getUnique(window.constants.TITLES),
         address: `${locationX}, ${locationY}`,
         price: window.util.getRandom(window.constants.MIN_PRICE, window.constants.MAX_PRICE),
-        type: window.constants.TYPES[window.util.getRandom(0, window.constants.TYPES.length)],
+        type: Object.keys(window.constants.TypesOfHouses)[window.util.getRandom(0, Object.keys(window.constants.TypesOfHouses).length)],
         rooms: window.util.getRandom(window.constants.MIN_ROOM, window.constants.MAX_ROOM + window.constants.MIN_ROOM),
         guests: window.util.getRandom(window.constants.MIN_GUESTS, window.constants.MAX_GUESTS + 1),
         checkin: window.constants.CHECK_TIMES[window.util.getRandom(0, window.constants.CHECK_TIMES.length)],
