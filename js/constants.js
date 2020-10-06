@@ -16,7 +16,7 @@
       `Милое гнездышко для фанатов Анимэ`],
     DESCRIPTIONS: `Великолепная квартира-студия в центре Токио. Подходит как туристам, так и бизнесменам. Квартира полностью укомплектована и недавно отремонтирована.`,
     PHOTOS: [`http://o0.github.io/assets/images/tokyo/hotel1.jpg`, `http://o0.github.io/assets/images/tokyo/hotel2.jpg`, `http://o0.github.io/assets/images/tokyo/hotel3.jpg`],
-    TYPES: [`palace`, `flat`, `house`, `bungalow`],
+    TYPES: [`bungalow`, `flat`, `house`, `palace`],
     FEATURES: [`wifi`, `dishwasher`, `parking`, `washer`, `elevator`, `conditioner`],
     CHECK_TIMES: [`12:00`, `13:00`, `14:00`],
     MIN_PRICE: 1000,
@@ -36,7 +36,7 @@
     AVATAR_WIDTH: 45,
     AVATAR_HEIGHT: 40,
     TypesOfHouses: {
-      'bungalo': {
+      'bungalow': {
         min: 0,
         placeholder: `0`,
         translate: `Бунгало`
