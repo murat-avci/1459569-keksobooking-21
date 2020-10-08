@@ -34,6 +34,7 @@
     ESC_KEYCODE: 27,
     AVATAR_WIDTH: 45,
     AVATAR_HEIGHT: 40,
+    TIMEOUT: 10000,
     TypesOfHouses: {
       'bungalow': {
         min: 0,
