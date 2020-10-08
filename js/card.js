@@ -32,8 +32,15 @@
     const roomNum = item.offer.rooms;
     const guestNum = item.offer.guests;
 
+    let roomPhrase = ` комнат для `;
+
     const guestPhrase = guestNum === 1 ? ` гостя` : ` гостей`;
-    const roomPhrase = roomNum === 1 ? ` комната для ` : `комнаты для`;
+
+    if (roomNum === 1) {
+      roomPhrase = ` комната для `;
+    } else if (roomNum > 1 && roomNum < 5) {
+      roomPhrase = ` комнаты для `;
+    }
 
     cardItem.querySelector(`.popup__title`).textContent = item.offer.title;
     cardItem.querySelector(`.popup__text--address`).textContent = item.offer.address;

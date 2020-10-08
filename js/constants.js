@@ -35,6 +35,10 @@
     AVATAR_WIDTH: 45,
     AVATAR_HEIGHT: 40,
     TIMEOUT: 10000,
+    PIN_TOP_COORD: 375,
+    PIN_LEFT_COORD: 570,
+    CAPACITY_SELECTED: 2,
+    ROOM_SELECTED: 0,
     TypesOfHouses: {
       'bungalow': {
         min: 0,
