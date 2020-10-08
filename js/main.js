@@ -22,6 +22,16 @@
         finalArr[j] = tmp;
       }
       return finalArr;
+    },
+
+    toggleDisabled(isDisabled, nodes) {
+      for (let i = 0; i < nodes.length; i++) {
+        nodes[i].disabled = isDisabled;
+      }
+    },
+
+    setAddress() {
+      window.elements.inputAddress.setAttribute(`value`, `${parseInt(window.elements.mainPin.style.left, 10)}, ${parseInt(window.elements.mainPin.style.top, 10)}`);
     }
 
   };

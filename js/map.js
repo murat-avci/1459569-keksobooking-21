@@ -1,8 +1,10 @@
 'use strict';
 (function () {
 
-  window.widthMap = window.elements.mapPinList.offsetWidth;
-  const inputAddress = window.elements.mapForm.querySelector(`#address`);
+  const widthMap = window.elements.mapPinList.offsetWidth;
+  const errorPopup = window.elements.errorTemplate.cloneNode(true);
+  const errorButton = errorPopup.querySelector(`.error__button`);
+  const messageContainer = errorPopup.querySelector(`.error__message`);
 
   window.elements.mainPin.addEventListener(`mousedown`, function (evt) {
     evt.preventDefault();
@@ -31,8 +33,8 @@
 
       if (offsetX < 0) {
         window.elements.mainPin.style.left = `${0}px`;
-      } else if (offsetX > window.widthMap - window.constants.PIN_WIDTH) {
-        window.elements.mainPin.style.left = `${window.widthMap - window.constants.PIN_WIDTH}px`;
+      } else if (offsetX > widthMap - window.constants.PIN_WIDTH) {
+        window.elements.mainPin.style.left = `${widthMap - window.constants.PIN_WIDTH}px`;
       } else {
         window.elements.mainPin.style.left = `${offsetX}px`;
       }
@@ -46,7 +48,7 @@
       }
 
       if (!window.elements.mapSection.classList.contains(`map--faded`)) {
-        inputAddress.setAttribute(`value`, `${Math.floor(leftPin)}, ${Math.floor(topPin)}`);
+        window.elements.inputAddress.setAttribute(`value`, `${Math.floor(leftPin)}, ${Math.floor(topPin)}`);
       }
     };
 
@@ -73,25 +75,69 @@
     window.elements.mapPinList.appendChild(window.elements.fragmentPins);
   };
 
-  const onButtonMouseUp = function () {
-    window.elements.mapSection.classList.remove(`map--faded`);
-    window.elements.advertForm.classList.remove(`ad-form--disabled`);
-    createPins(window.dates);
-    window.toggleDisabled(false, window.elements.fieldsets);
-    window.toggleDisabled(false, window.elements.filterSelects);
-    removeOnButtonMouseUp();
-    window.setAddress();
+  window.map = {
+    onButtonMouseUp() {
+
+      const onLoadSuccess = function (advert) {
+        window.adverts = advert;
+        createPins(window.adverts);
+      };
+
+      window.backend.load(onLoadSuccess, onLoadError);
+
+      window.elements.mapSection.classList.remove(`map--faded`);
+      window.elements.advertForm.classList.remove(`ad-form--disabled`);
+      window.util.toggleDisabled(false, window.elements.fieldsets);
+      window.util.toggleDisabled(false, window.elements.filterSelects);
+      removeonButtonMouseUp();
+      window.util.setAddress();
+    }
   };
 
-  window.addEventListener(`load`, function () {
-    window.toggleDisabled(true, window.elements.fieldsets);
-    window.toggleDisabled(true, window.elements.filterSelects);
-    window.elements.mainPin.addEventListener(`mouseup`, onButtonMouseUp);
-    window.setAddress();
-  });
-
-  const removeOnButtonMouseUp = function () {
-    window.elements.mainPin.removeEventListener(`mouseup`, onButtonMouseUp);
+  const removeonButtonMouseUp = function () {
+    window.elements.mainPin.removeEventListener(`mouseup`, window.map.onButtonMouseUp);
   };
 
+  const onEscErrorPress = function (evt) {
+    if (evt.keyCode === window.constants.ESC_KEYCODE) {
+      removeListeners();
+    }
+  };
+
+  const onEnterErrorClick = function (evt) {
+    if (evt.keyCode === window.constants.ENTER_KEYCODE) {
+      removeListeners();
+    }
+  };
+
+  const onButtonErrorClick = function () {
+    removeListeners();
+  };
+
+  const removeListeners = function () {
+    window.elements.mapSection.removeChild(errorPopup);
+    errorButton.removeEventListener(`keyup`, onEnterErrorClick);
+    document.removeEventListener(`keyup`, onEscErrorPress);
+    document.removeEventListener(`click`, onButtonErrorClick);
+  };
+
+  const onLoadError = function (errorMessage) {
+    messageContainer.textContent = errorMessage;
+    errorButton.setAttribute(`tabindex`, `0`);
+
+    errorButton.addEventListener(`keyup`, onEnterErrorClick);
+    document.addEventListener(`keyup`, onEscErrorPress);
+    document.addEventListener(`click`, onButtonErrorClick);
+
+    window.elements.mapSection.appendChild(errorPopup);
+  };
+
+  const onLoadEnabled = function () {
+    window.util.toggleDisabled(true, window.elements.fieldsets);
+    window.util.toggleDisabled(true, window.elements.filterSelects);
+    window.elements.mainPin.addEventListener(`mouseup`, window.map.onButtonMouseUp);
+    window.util.setAddress();
+  };
+
+  window.addEventListener(`load`, onLoadEnabled);
 })();
