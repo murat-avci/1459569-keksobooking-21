@@ -18,6 +18,31 @@
   const formDescription = window.elements.mapForm.querySelector(`#description`);
   const titleAdvert = window.elements.mapForm.querySelector(`#title`);
 
+  const rooms = Object.keys(window.constants.Rooms);
+  const guests = window.constants.Guests;
+
+  const syncGuestsWithRooms = function (guestField, guestValue) {
+    guestField.value = guestValue;
+    let currentValue = guestField.value;
+
+    for (let i = 0; i < guestField.options.length; i++) {
+      guestField.options[i].disabled = (currentValue === `0`) ?
+        (guestField.options[i].value !== `0`) :
+        (guestField.options[i].value > currentValue || guestField.options[i].value === `0`);
+    }
+  };
+
+  window.synchronizeFields = function (firstField, secondField, firstValues, secondValues, syncCallback) {
+    const currentIndex = firstValues.indexOf(firstField.value);
+    syncCallback(secondField, secondValues[currentIndex]);
+  };
+
+  const getCapacitySync = function () {
+    window.synchronizeFields(roomNumber, capacity, rooms, guests, syncGuestsWithRooms);
+  };
+
+  roomNumber.addEventListener(`change`, getCapacitySync);
+
   const onTimeInChange = function () {
     timeOut.value = timeIn.value;
   };
@@ -127,8 +152,8 @@
   });
 
   const resetMainPin = function () {
-    window.elements.mainPin.style.left = `${window.constants.PIN_LEFT_COORD} px`;
-    window.elements.mainPin.style.top = `${window.constants.PIN_TOP_COORD} px`;
+    window.elements.mainPin.style.left = `${window.constants.PIN_LEFT_COORD}px`;
+    window.elements.mainPin.style.top = `${window.constants.PIN_TOP_COORD}px`;
   };
 
   const clearMap = function () {
