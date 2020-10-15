@@ -58,4 +58,5 @@
     cardItem.querySelector(`.popup__avatar`).src = item.author.avatar;
     return cardItem;
   };
+
 })();

@@ -2,17 +2,18 @@
 
 (function () {
 
+  let currentPin = null;
+
   window.showCard = {
     activeCardId: null,
-    currentPin: null,
     currentCard: null
   };
 
   const removeCard = function () {
-    if (window.showCard.currentCard) {
-      window.elements.mapSection.removeChild(window.showCard.currentCard);
+    if (window.showCard.currentAdvert) {
+      window.elements.mapSection.removeChild(window.showCard.currentAdvert);
 
-      window.showCard.currentCard = null;
+      window.showCard.currentAdvert = null;
     }
   };
 
@@ -20,24 +21,24 @@
     if (evt.keyCode === window.constants.ESC_KEYCODE) {
       removeCard();
       document.removeEventListener(`keydown`, onPopupEscPress);
-      window.showCard.currentPin.classList.remove(window.constants.MAP_PIN_ACTIVE_CLASS);
+      currentPin.classList.remove(window.constants.MAP_PIN_ACTIVE_CLASS);
       window.showCard.activeCardId = null;
-      window.showCard.currentPin.blur();
+      currentPin.blur();
     }
   };
 
   const removeActiveCard = function () {
     removeCard();
 
-    if (window.showCard.currentPin) {
-      window.showCard.currentPin.classList.remove(window.constants.MAP_PIN_ACTIVE_CLASS);
+    if (currentPin) {
+      currentPin.classList.remove(window.constants.MAP_PIN_ACTIVE_CLASS);
       window.showCard.activeCardId = null;
     }
   };
 
   const createCard = function (id) {
     window.showCard.activeCardId = id;
-    window.showCard.currentCard = window.elements.mapSection.appendChild(window.getCardData(window.adverts[id]));
+    window.showCard.currentAdvert = window.elements.mapSection.appendChild(window.getCardData(window.adverts[id]));
     document.addEventListener(`keydown`, onPopupEscPress);
   };
 
@@ -56,7 +57,7 @@
     }
 
     removeActiveCard();
-    window.showCard.currentPin = pinButton;
+    currentPin = pinButton;
     createCard(pinButton.dataset.id);
     pinButton.classList.add(window.constants.MAP_PIN_ACTIVE_CLASS);
   };

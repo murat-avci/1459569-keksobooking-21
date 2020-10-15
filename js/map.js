@@ -62,25 +62,12 @@
     document.addEventListener(`mouseup`, onMouseUp);
   });
 
-  const createPins = function (icons) {
-    for (let i = 0; i < icons.length; i++) {
-      const pinElem = window.elements.pinTemplate.cloneNode(true);
-      pinElem.children[0].src = icons[i].author.avatar;
-      pinElem.dataset.id = i;
-      pinElem.style.left = `${icons[i].location.x}px`;
-      pinElem.style.top = `${icons[i].location.y}px`;
-      pinElem.children[0].alt = icons[i].offer.title;
-      window.elements.fragmentPins.appendChild(pinElem);
-    }
-    window.elements.mapPinList.appendChild(window.elements.fragmentPins);
-  };
-
   window.map = {
     onButtonMouseUp() {
 
       const onLoadSuccess = function (advert) {
-        window.adverts = advert;
-        createPins(window.adverts);
+        window.adverts = window.util.shuffleArray(advert).splice(0, 5);
+        window.pin.createPins(window.adverts);
       };
 
       window.backend.load(onLoadSuccess, onLoadError);

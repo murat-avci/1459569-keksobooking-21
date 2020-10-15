@@ -14,8 +14,12 @@
     advertForm: document.querySelector(`.ad-form`),
     mapForm: document.querySelector(`.ad-form `),
     fragmentPins: document.createDocumentFragment(),
-    errorTemplate: document.querySelector(`#error`).content.querySelector(`.error`),
-    successTemplate: document.querySelector(`#success`).content.querySelector(`.success`),
-    inputAddress: document.querySelector(`#address`)
+    errorTemplate: document.querySelector(`#error`).content
+    .querySelector(`.error`),
+    successTemplate: document.querySelector(`#success`).content
+    .querySelector(`.success`),
+    inputAddress: document.querySelector(`#address`),
+    filtersForm: document.querySelector(`.map__filters`)
   };
+
 })();

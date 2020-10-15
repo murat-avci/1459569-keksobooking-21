@@ -8,7 +8,6 @@
   const timeIn = window.elements.mapForm.querySelector(`#timein`);
   const timeOut = window.elements.mapForm.querySelector(`#timeout`);
   const housePrice = window.elements.mapForm.querySelector(`#price`);
-  const inputAddress = window.elements.mapForm.querySelector(`#address`);
   const options = capacity.querySelectorAll(`option`);
   const successPopup = window.elements.successTemplate.cloneNode(true);
   const errorPopup = window.elements.errorTemplate.cloneNode(true);
@@ -150,7 +149,6 @@
 
     if (openedCard) {
       window.showCard.activeCardId = null;
-      window.showCard.currentPin = null;
       window.showCard.currentCard = null;
       window.elements.mapSection.removeChild(openedCard);
     }
@@ -172,17 +170,6 @@
     resetMainPin();
     window.util.setAddress();
     window.elements.mainPin.addEventListener(`mouseup`, window.map.onButtonMouseUp);
-  };
-
-
-  window.setAddress = function () {
-    inputAddress.setAttribute(`value`, `${parseInt(window.elements.mainPin.style.left, 10)}, ${parseInt(window.elements.mainPin.style.top, 10)}`);
-  };
-
-  window.toggleDisabled = function (isDisabled, nodes) {
-    for (let i = 0; i < nodes.length; i++) {
-      nodes[i].disabled = isDisabled;
-    }
   };
 
   resetButton.addEventListener(`click`, onResetClick);

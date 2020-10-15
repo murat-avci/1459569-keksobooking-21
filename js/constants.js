@@ -39,6 +39,8 @@
     PIN_LEFT_COORD: 570,
     CAPACITY_SELECTED: 2,
     ROOM_SELECTED: 0,
+    DEBOUNCE_INTERVAL: 500,
+    MAX_QUANTITY_PINS: 5,
     TypesOfHouses: {
       'bungalow': {
         min: 0,
