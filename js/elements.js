@@ -19,7 +19,7 @@
     successTemplate: document.querySelector(`#success`).content
     .querySelector(`.success`),
     inputAddress: document.querySelector(`#address`),
-    filtersForm: document.querySelector(`.map__filters`)
+    filterForm: document.querySelector(`.map__filters`)
   };
 
 })();

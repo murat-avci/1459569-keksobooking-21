@@ -1,42 +1,50 @@
 'use strict';
 
 (function () {
-  const filterForm = document.querySelector(`.map__filters`);
-  const type = filterForm.querySelector(`#housing-type`);
 
+  const type = window.elements.filterForm.querySelector(`#housing-type`);
 
   const removeMapArea = function () {
-    const openedCard = window.elements.mapSection.querySelector(`.map__card`);
-    const visiblePins = document.querySelectorAll(`.map__pin:not(.map__pin--main)`);
-    visiblePins.forEach(function (it) {
-      it.remove();
+
+    window.pin.visible.forEach(function (pin) {
+      pin.remove();
     });
 
-    if (openedCard) {
-      window.showCard.activeCardId = null;
-      window.showCard.currentCard = null;
-      window.elements.mapSection.removeChild(openedCard);
-    }
+    window.pin.visible = [];
+
+    window.showCard.closeOpenedAdvert(window.showCard.currentAdvert);
+
+
   };
 
   const chooseTypes = function (selectType) {
     return type.value === `any` || selectType.offer.type === type.value;
   };
 
-  const onFilterChange = function () {
+  const onMapFormChange = function () {
 
     removeMapArea();
-
-    const filteredPins = window.adverts.filter(function (filteredData) {
-      const adType = chooseTypes(filteredData);
+    window.shufledPins = window.util.shuffleArray(window.adverts);
+    window.filteredPins = window.shufledPins.filter(function (filtredData) {
+      const adType = chooseTypes(filtredData);
 
       return adType;
     });
 
-    window.pin.createPins(filteredPins);
+    window.pin.createPins(window.filteredPins.slice(0, window.constants.MAX_QUANTITY_PINS));
+
+    if (window.filteredPins.length === 0) {
+      document.removeEventListener(`keydown`, window.showCard.onEscRemoveAdvert);
+      window.elements.mapSection.removeEventListener(`click`, window.showCard.onPinClick);
+    } else {
+      document.addEventListener(`keydown`, window.showCard.onEscRemoveAdvert);
+      window.elements.mapSection.addEventListener(`click`, window.showCard.onPinClick);
+    }
 
   };
 
-  filterForm.addEventListener(`change`, window.debounce(onFilterChange));
+  window.filter = {
+    onMapFormChange: window.debounce(onMapFormChange)
+  };
 
 })();

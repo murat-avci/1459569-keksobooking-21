@@ -7,6 +7,7 @@
   const messageContainer = errorPopup.querySelector(`.error__message`);
 
   window.elements.mainPin.addEventListener(`mousedown`, function (evt) {
+
     evt.preventDefault();
     let startCoords = {
       x: evt.clientX,
@@ -66,8 +67,9 @@
     onButtonMouseUp() {
 
       const onLoadSuccess = function (advert) {
-        window.adverts = window.util.shuffleArray(advert).splice(0, 5);
-        window.pin.createPins(window.adverts);
+        window.adverts = advert;
+        window.filteredPins = window.util.shuffleArray(advert).splice(0, window.constants.MAX_QUANTITY_PINS);
+        window.pin.createPins(window.filteredPins);
       };
 
       window.backend.load(onLoadSuccess, onLoadError);
@@ -78,6 +80,9 @@
       window.util.toggleDisabled(false, window.elements.filterSelects);
       removeonButtonMouseUp();
       window.util.setAddress();
+      window.elements.filterForm.addEventListener(`change`, window.filter.onMapFormChange);
+      window.elements.mapSection.addEventListener(`click`, window.showCard.onPinClick);
+      window.elements.filterForm.addEventListener(`change`, window.filter.onMapFormChange);
     }
   };
 
@@ -119,12 +124,11 @@
     window.elements.mapSection.appendChild(errorPopup);
   };
 
-  const onLoadEnabled = function () {
-    window.util.toggleDisabled(true, window.elements.fieldsets);
-    window.util.toggleDisabled(true, window.elements.filterSelects);
-    window.elements.mainPin.addEventListener(`mouseup`, window.map.onButtonMouseUp);
-    window.util.setAddress();
-  };
 
-  window.addEventListener(`load`, onLoadEnabled);
+  window.util.toggleDisabled(true, window.elements.fieldsets);
+  window.util.toggleDisabled(true, window.elements.filterSelects);
+  window.util.setAddress();
+
+  window.elements.mainPin.addEventListener(`mouseup`, window.map.onButtonMouseUp);
+
 })();
