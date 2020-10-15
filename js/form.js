@@ -8,7 +8,6 @@
   const timeIn = window.elements.mapForm.querySelector(`#timein`);
   const timeOut = window.elements.mapForm.querySelector(`#timeout`);
   const housePrice = window.elements.mapForm.querySelector(`#price`);
-  const inputAddress = window.elements.mapForm.querySelector(`#address`);
   const options = capacity.querySelectorAll(`option`);
   const successPopup = window.elements.successTemplate.cloneNode(true);
   const errorPopup = window.elements.errorTemplate.cloneNode(true);
@@ -65,7 +64,9 @@
     if (successPopup) {
       window.elements.mapSection.removeChild(successPopup);
     }
-    document.removeEventListener(`keydown`, onSuccessEscPress);
+    document.removeEventListener(`keydown`, window.showCard.onEscRemoveAdvert);
+    window.elements.filterForm.removeEventListener(`change`, window.filter.onMapFormChange);
+    document.removeEventListener(`keyup`, onSuccessEscPress);
     document.removeEventListener(`click`, onSuccessButtonClick);
   };
 
@@ -104,6 +105,8 @@
 
   const removeErrorListeners = function () {
     window.elements.mapSection.removeChild(errorPopup);
+    document.removeEventListener(`keydown`, window.showCard.onEscRemoveAdvert);
+    window.elements.filterForm.removeEventListener(`change`, window.filter.onMapFormChange);
     errorButton.removeEventListener(`keyup`, onButtonErrorKeyup);
     document.removeEventListener(`keyup`, onEscErrorKeyup);
     document.removeEventListener(`click`, onButtonErrorClick);
@@ -124,6 +127,7 @@
   window.elements.mapForm.addEventListener(`submit`, function (evt) {
     evt.preventDefault();
     window.backend.upload(new FormData(window.elements.mapForm), onUploadSuccess, onUploadError);
+    window.elements.mapSection.removeEventListener(`click`, window.showCard.onPinClick);
 
   });
 
@@ -140,7 +144,6 @@
   };
 
   const onResetClick = function () {
-    const openedCard = window.elements.mapSection.querySelector(`.map__card`);
 
     featureCheckboxes.forEach(function (element) {
       if (element.checked) {
@@ -148,12 +151,7 @@
       }
     });
 
-    if (openedCard) {
-      window.showCard.activeCardId = null;
-      window.showCard.currentPin = null;
-      window.showCard.currentCard = null;
-      window.elements.mapSection.removeChild(openedCard);
-    }
+    window.showCard.closeOpenedAdvert(window.showCard.currentAdvert);
 
     titleAdvert.value = ``;
     formDescription.value = ``;
@@ -171,18 +169,10 @@
     clearMap();
     resetMainPin();
     window.util.setAddress();
+    document.removeEventListener(`keydown`, window.showCard.onEscRemoveAdvert);
+    window.elements.mapSection.removeEventListener(`click`, window.showCard.onPinClick);
+    window.elements.filterForm.removeEventListener(`change`, window.filter.onMapFormChange);
     window.elements.mainPin.addEventListener(`mouseup`, window.map.onButtonMouseUp);
-  };
-
-
-  window.setAddress = function () {
-    inputAddress.setAttribute(`value`, `${parseInt(window.elements.mainPin.style.left, 10)}, ${parseInt(window.elements.mainPin.style.top, 10)}`);
-  };
-
-  window.toggleDisabled = function (isDisabled, nodes) {
-    for (let i = 0; i < nodes.length; i++) {
-      nodes[i].disabled = isDisabled;
-    }
   };
 
   resetButton.addEventListener(`click`, onResetClick);

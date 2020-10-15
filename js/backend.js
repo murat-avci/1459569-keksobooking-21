@@ -10,13 +10,13 @@
 
     xhr.addEventListener(`load`, function () {
       switch (xhr.status) {
-        case 200:
+        case window.constants.SUCCESS_REQ:
           onLoad(xhr.response);
           break;
-        case 400:
+        case window.constants.FAILED_REQ:
           onError(`Неверный запрос`);
           break;
-        case 404:
+        case window.constants.BAD_REQ:
           onError(`Ничего не найдено`);
           break;
         default:

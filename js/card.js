@@ -34,11 +34,11 @@
 
     let roomPhrase = ` комнат для `;
 
-    const guestPhrase = guestNum === 1 ? ` гостя` : ` гостей`;
+    const guestPhrase = guestNum === window.constants.MIN_GUESTS ? ` гостя` : ` гостей`;
 
-    if (roomNum === 1) {
+    if (roomNum === window.constants.MIN_ROOM) {
       roomPhrase = ` комната для `;
-    } else if (roomNum > 1 && roomNum < 5) {
+    } else if (roomNum > window.constants.MIN_ROOM && roomNum < window.constants.MAX_ROOM) {
       roomPhrase = ` комнаты для `;
     }
 
@@ -58,4 +58,5 @@
     cardItem.querySelector(`.popup__avatar`).src = item.author.avatar;
     return cardItem;
   };
+
 })();

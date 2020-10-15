@@ -2,21 +2,6 @@
 
 (function () {
   window.constants = {
-    CARDS_AMOUNT: 8,
-    TITLES: [
-      `Уютное гнездышко для молодоженов`,
-      `Маленькая квартирка рядом с парком`,
-      `Небольшая лавочка в парке`,
-      `Императорский дворец в центре Токио`,
-      `Милейший чердачок`,
-      `Наркоманский притон`,
-      `Чёткая хата`,
-      `Стандартная квартира в центре`,
-      `Тихая квартирка недалеко от метро`,
-      `Милое гнездышко для фанатов Анимэ`],
-    DESCRIPTIONS: `Великолепная квартира-студия в центре Токио. Подходит как туристам, так и бизнесменам. Квартира полностью укомплектована и недавно отремонтирована.`,
-    PHOTOS: [`http://o0.github.io/assets/images/tokyo/hotel1.jpg`, `http://o0.github.io/assets/images/tokyo/hotel2.jpg`, `http://o0.github.io/assets/images/tokyo/hotel3.jpg`],
-    FEATURES: [`wifi`, `dishwasher`, `parking`, `washer`, `elevator`, `conditioner`],
     CHECK_TIMES: [`12:00`, `13:00`, `14:00`],
     MIN_PRICE: 1000,
     MAX_PRICE: 1000000,
@@ -26,7 +11,6 @@
     MAX_GUESTS: 5,
     MIN_LOCATION_Y: 130,
     MAX_LOCATION_Y: 630,
-    IMAGE_NUM_RANGES: [1, 2, 3, 4, 5, 6, 7, 8],
     PIN_HEIGHT: 65,
     PIN_WIDTH: 65,
     PIN_ARROW_HEIGHT: 22,
@@ -39,6 +23,11 @@
     PIN_LEFT_COORD: 570,
     CAPACITY_SELECTED: 2,
     ROOM_SELECTED: 0,
+    DEBOUNCE_INTERVAL: 500,
+    SUCCESS_REQ: 200,
+    FAILED_REQ: 400,
+    BAD_REQ: 404,
+    MAX_QUANTITY_PINS: 5,
     TypesOfHouses: {
       'bungalow': {
         min: 0,

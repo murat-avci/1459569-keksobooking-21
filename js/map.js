@@ -7,6 +7,7 @@
   const messageContainer = errorPopup.querySelector(`.error__message`);
 
   window.elements.mainPin.addEventListener(`mousedown`, function (evt) {
+
     evt.preventDefault();
     let startCoords = {
       x: evt.clientX,
@@ -62,25 +63,13 @@
     document.addEventListener(`mouseup`, onMouseUp);
   });
 
-  const createPins = function (icons) {
-    for (let i = 0; i < icons.length; i++) {
-      const pinElem = window.elements.pinTemplate.cloneNode(true);
-      pinElem.children[0].src = icons[i].author.avatar;
-      pinElem.dataset.id = i;
-      pinElem.style.left = `${icons[i].location.x}px`;
-      pinElem.style.top = `${icons[i].location.y}px`;
-      pinElem.children[0].alt = icons[i].offer.title;
-      window.elements.fragmentPins.appendChild(pinElem);
-    }
-    window.elements.mapPinList.appendChild(window.elements.fragmentPins);
-  };
-
   window.map = {
     onButtonMouseUp() {
 
       const onLoadSuccess = function (advert) {
         window.adverts = advert;
-        createPins(window.adverts);
+        window.filteredPins = window.util.shuffleArray(advert).splice(0, window.constants.MAX_QUANTITY_PINS);
+        window.pin.createPins(window.filteredPins);
       };
 
       window.backend.load(onLoadSuccess, onLoadError);
@@ -91,6 +80,9 @@
       window.util.toggleDisabled(false, window.elements.filterSelects);
       removeonButtonMouseUp();
       window.util.setAddress();
+      window.elements.filterForm.addEventListener(`change`, window.filter.onMapFormChange);
+      window.elements.mapSection.addEventListener(`click`, window.showCard.onPinClick);
+      window.elements.filterForm.addEventListener(`change`, window.filter.onMapFormChange);
     }
   };
 
@@ -132,12 +124,11 @@
     window.elements.mapSection.appendChild(errorPopup);
   };
 
-  const onLoadEnabled = function () {
-    window.util.toggleDisabled(true, window.elements.fieldsets);
-    window.util.toggleDisabled(true, window.elements.filterSelects);
-    window.elements.mainPin.addEventListener(`mouseup`, window.map.onButtonMouseUp);
-    window.util.setAddress();
-  };
 
-  window.addEventListener(`load`, onLoadEnabled);
+  window.util.toggleDisabled(true, window.elements.fieldsets);
+  window.util.toggleDisabled(true, window.elements.filterSelects);
+  window.util.setAddress();
+
+  window.elements.mainPin.addEventListener(`mouseup`, window.map.onButtonMouseUp);
+
 })();
