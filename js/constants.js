@@ -27,6 +27,8 @@
     SUCCESS_REQ: 200,
     FAILED_REQ: 400,
     BAD_REQ: 404,
+    MIN_OFFER_PRICE: 1000,
+    MAX_OFFER_PRICE: 50000,
     MAX_QUANTITY_PINS: 5,
     TypesOfHouses: {
       'bungalow': {
