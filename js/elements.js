@@ -19,5 +19,8 @@ window.elements = {
   successTemplate: document.querySelector(`#success`).content
   .querySelector(`.success`),
   inputAddress: document.querySelector(`#address`),
+  avatarContainer: document.querySelector(`.ad-form-header__upload`),
+  previewContainer: document.querySelector(`.ad-form-header__preview img`),
+  photoContainer: document.querySelector(`.ad-form__photo-container`),
   filterForm: document.querySelector(`.map__filters`)
 };
