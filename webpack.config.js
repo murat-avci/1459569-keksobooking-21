@@ -8,6 +8,7 @@ module.exports = {
     `./js/elements.js`,
     `./js/filter.js`,
     `./js/form.js`,
+    `./js/photo.js`,
     `./js/main.js`,
     `./js/pin.js`,
     `./js/map.js`,
