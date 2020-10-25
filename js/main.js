@@ -2,12 +2,6 @@
 
 window.util = {
 
-  getUnique(titles) {
-    const uniqueEl = titles[this.getRandom(0, titles.length)];
-    titles.splice(titles.indexOf(uniqueEl), 1);
-    return uniqueEl;
-  },
-
   getRandom(min, max) {
     return Math.floor(Math.random() * (max - min)) + min;
   },
